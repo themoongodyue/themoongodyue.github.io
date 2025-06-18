@@ -1,0 +1,243 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Docker-记录 | 小茗同志</title><meta name="author" content="小茗"><meta name="copyright" content="小茗"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="安装 nvidia-container-toolkit安装指南 nvidia-container-toolkit安装指南2   主要安装docker，docker-compose，nvidia-container-toolkit。   archlinux直接使用pacman安装即可   启动前先修改docker镜像源sudo vim &#x2F;etc&#x2F;docker&#x2F;daemon.json   &amp;#123;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker-记录">
+<meta property="og:url" content="http://example.com/2024/04/21/Docker-%E8%AE%B0%E5%BD%95/index.html">
+<meta property="og:site_name" content="小茗同志">
+<meta property="og:description" content="安装 nvidia-container-toolkit安装指南 nvidia-container-toolkit安装指南2   主要安装docker，docker-compose，nvidia-container-toolkit。   archlinux直接使用pacman安装即可   启动前先修改docker镜像源sudo vim &#x2F;etc&#x2F;docker&#x2F;daemon.json   &amp;#123;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2024/04/21/fBgpo5julRqerD4.png">
+<meta property="article:published_time" content="2024-04-21T21:37:57.000Z">
+<meta property="article:modified_time" content="2025-06-18T02:26:21.662Z">
+<meta property="article:author" content="小茗">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2024/04/21/fBgpo5julRqerD4.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2024/04/21/Docker-%E8%AE%B0%E5%BD%95/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Docker-记录',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-06-18 02:26:21'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpeg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">24</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">21</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://s2.loli.net/2024/04/21/fBgpo5julRqerD4.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">小茗同志</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Docker-记录</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-04-21T21:37:57.000Z" title="发表于 2024-04-21 21:37:57">2024-04-21</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-06-18T02:26:21.662Z" title="更新于 2025-06-18 02:26:21">2025-06-18</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Docker-记录"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1>安装</h1>
+<p><a target="_blank" rel="noopener" href="https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html">nvidia-container-toolkit安装指南</a><br>
+<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/674055720">nvidia-container-toolkit安装指南2</a></p>
+<ul>
+<li>
+<p>主要安装<code>docker</code>，<code>docker-compose</code>，<code>nvidia-container-toolkit</code>。</p>
+</li>
+<li>
+<p><strong>archlinux</strong>直接使用<code>pacman</code>安装即可</p>
+</li>
+<li>
+<p>启动前先修改docker镜像源<code>sudo vim /etc/docker/daemon.json</code></p>
+</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;registry-mirrors&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="string">&quot;https://your-mirror-url.example.com&quot;</span><span class="comment">//添加的镜像源</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>
+<p>配置<code>nvidia-container-toolkit</code>：<code>sudo nvidia-ctk runtime configure --runtime=docker</code></p>
+</li>
+<li>
+<p>启动docker服务<code>sudo systemctl start docker</code>，<code>sudo systemctl enable docker</code></p>
+</li>
+</ul>
+<div class="note purple icon-padding simple"><i class="note-icon far fa-hand-scissors"></i><p>现在的<code>nvidia-container-toolkit</code>已经无需额外配置了？</p>
+</div>
+<h1>使用</h1>
+<p><a target="_blank" rel="noopener" href="https://docker.easydoc.net/doc/81170005/cCewZWoN/lTKfePfP">快速入门简介</a></p>
+<h2 id="常用指令">常用指令</h2>
+<ul>
+<li><code>docker ps</code>查看正在运行的容器，<code>docker ps -a</code>查看所有容器</li>
+<li><code>docker images</code>查看镜像。</li>
+<li><code>docker pull [镜像]</code>从镜像源拉取镜像。</li>
+<li><code>docker run [参数] [镜像]</code>运行容器。常用参数有<code>-d</code>后台运行，<code>-p</code>端口映射，<code>-v</code>挂载卷，<code>-i</code>交互模式，<code>-t</code>终端模式，<code>--gpu all</code>启用gpu，<code>--rm</code>容器关闭后即删除容器。</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run --gpus all -it -p 8088:8888 -v /home/light/tuxiaoshi:/workspace nvcr.io/nvidia/pytorch:24.03-py3</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>docker stop [容器]</code>停止容器。</li>
+<li><code>docker rm [容器]</code>删除容器。</li>
+<li><code>docker rmi [镜像]</code>删除镜像。</li>
+</ul>
+<h2 id="Dockerfile">Dockerfile</h2>
+<p>Dockerfile是Docker镜像的构建文件，用于描述镜像的构建过程。Dockerfile中的指令包括：</p>
+<ul>
+<li><code>FROM</code> 指定基础镜像，例如<code>FROM ubuntu:latest</code>。</li>
+<li><code>RUN</code> 执行命令，例如<code>RUN apt-get update &amp;&amp; apt-get install -y python3</code>。</li>
+<li><code>COPY</code> 将文件或目录复制到镜像中，例如<code>COPY . /app</code>。</li>
+<li><code>WORKDIR</code> 指定工作目录，例如<code>WORKDIR /app</code></li>
+<li><code>EXPOSE</code> 指定容器的端口，例如<code>EXPOSE 80</code>。</li>
+</ul>
+<div class="note purple icon-padding simple"><i class="note-icon far fa-hand-scissors"></i><p><code>EXPOSE</code> 指定的端口只是声明一下，当使用<code>docker run</code>命令时，配合<code>-P</code>或<code>--publish-all</code>选项，Docker会自动将EXPOSE声明的端口映射到宿主机上的随机端口。例如，如果Dockerfile中包含<code>EXPOSE 80</code>，那么运行<code>docker run -P</code>时，Docker会为宿主机选择一个未被占用的端口（如49153），并将该端口与容器内的80端口建立映射。或者直接使用-p 选项指定端口映射，例如<code>docker run -p 8080:80</code>。</p>
+</div>
+<ul>
+<li><code>CMD</code> 指定容器启动时执行的命令，例如<code>CMD [&quot;python&quot;, &quot;app.py&quot;]</code>。</li>
+</ul>
+<p>Dockerfile一般会放在项目的根目录下，然后使用<code>docker build -t [镜像名]:[版本号] .</code> 命令构建镜像。</p>
+<h2 id="docker-compose">docker-compose</h2>
+<p><code>docker-compose</code>是一个用于定义和运行多容器Docker应用程序的工具。它允许我们使用YAML文件来描述应用程序的各个组件，包括它们的依赖关系和配置信息。</p>
+<p>一般在多个容器之间进行通信时，需要使用<code>docker-compose</code>。详见<a target="_blank" rel="noopener" href="https://docker.easydoc.net/doc/81170005/cCewZWoN/IJJcUk5J">快速入门简介</a>。</p>
+<h1>配合VSCode</h1>
+<p>安装<code>docker</code>插件、<code>remote development</code>插件包。<br>
+<img src="https://s2.loli.net/2024/04/21/QqprW8oVEJ6f5TD.png" alt="docker"><br>
+<img src="https://s2.loli.net/2024/04/21/kgOQ7MIuFXTCBEn.png" alt="remote development"></p>
+<p><img src="https://s2.loli.net/2024/04/21/Ziv4YEXgf6qxs9m.png" alt="docker"></p>
+<p><img src="https://s2.loli.net/2024/04/21/pyCTkWic9Yrl2Ab.png" alt="remote development"></p>
+<h1>使用心得</h1>
+<p>人工智能应用，一般在主机上训练测试，在容器上部署。</p>
+<h1>错误排查</h1>
+<h2 id="archlinux更新系统时出现如下错误">archlinux更新系统时出现如下错误</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">(15/17) Regenerate NVIDIA CDI (Container Device Interface)</span><br><span class="line">time=<span class="string">&quot;2024-04-23T09:10:57+08:00&quot;</span> level=error msg=<span class="string">&quot;failed to generate CDI spec: failed to create device CDI specs: failed to initialize NVML: ERROR_LIB_RM_VERSION_MISMATCH&quot;</span></span><br><span class="line">错误：命令未能被正确执行</span><br></pre></td></tr></table></figure>
+<p>查看<code>pacman.log</code>,<code>sudo tail -n 100 /var/log/pacman.log</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[2024-04-23T09:10:57+0800] [ALPM] running &#x27;nvidia-ctk-cdi.hook&#x27;...</span><br><span class="line">[2024-04-23T09:10:57+0800] [ALPM-SCRIPTLET] time=&quot;2024-04-23T09:10:57+08:00&quot; level=error msg=&quot;failed to generate CDI spec: failed to create device CDI specs: failed to initialize NVML: ERROR_LIB_RM_VERSION_MISMATCH&quot;</span><br></pre></td></tr></table></figure>
+<p>该<code>hook</code>(<code>/usr/share/libalpm/hooks/nvidia-ctk-cdi.hook</code>)似乎要求加载的 <code>nvidia 驱动程序</code>与 <code>NVML 库</code>版本相匹配，而这在驱动程序更新时是不可能的。</p>
+<p>解决方法：重启后手动执行<code>hook</code>中的内容：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo /usr/bin/nvidia-ctk --quiet cdi generate --output=/etc/cdi/nvidia.yaml</span><br></pre></td></tr></table></figure></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">小茗</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2024/04/21/Docker-%E8%AE%B0%E5%BD%95/">http://example.com/2024/04/21/Docker-%E8%AE%B0%E5%BD%95/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">小茗同志</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://s2.loli.net/2024/04/21/fBgpo5julRqerD4.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.png" target="_blank"><img class="post-qr-code-img" src="/img/wechat.png" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/02/20/VSCode%E4%B8%8ECMake/"><img class="prev-cover" src="https://s2.loli.net/2024/02/20/G3BK75ThLl1Ir4D.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">VSCode与CMake</div></div></a></div><div class="next-post pull-right"><a href="/2024/04/26/%E5%9B%B4%E6%A3%8B%E5%85%A5%E9%97%A8/"><img class="next-cover" src="https://cdn.pixabay.com/photo/2020/04/03/06/35/work-4997565_960_720.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">围棋入门</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpeg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">小茗</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">24</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">21</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/themoongodyue"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/themoongodyue" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:yuecao04@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">安装</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4"><span class="toc-text">常用指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dockerfile"><span class="toc-text">Dockerfile</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#docker-compose"><span class="toc-text">docker-compose</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">配合VSCode</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">使用心得</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">错误排查</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#archlinux%E6%9B%B4%E6%96%B0%E7%B3%BB%E7%BB%9F%E6%97%B6%E5%87%BA%E7%8E%B0%E5%A6%82%E4%B8%8B%E9%94%99%E8%AF%AF"><span class="toc-text">archlinux更新系统时出现如下错误</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/06/18/hello-world/" title="Hello World"><img src="https://cdn.pixabay.com/photo/2020/04/03/06/35/work-4997565_960_720.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hello World"/></a><div class="content"><a class="title" href="/2025/06/18/hello-world/" title="Hello World">Hello World</a><time datetime="2025-06-18T02:26:21.663Z" title="发表于 2025-06-18 02:26:21">2025-06-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/02/20/think-of-GNN/" title="think of GNN"><img src="https://s21.ax1x.com/2025/02/20/pEQwN5V.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="think of GNN"/></a><div class="content"><a class="title" href="/2025/02/20/think-of-GNN/" title="think of GNN">think of GNN</a><time datetime="2025-02-20T16:27:34.000Z" title="发表于 2025-02-20 16:27:34">2025-02-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/02/20/Code-of-GNN/" title="Code of GNN"><img src="https://s21.ax1x.com/2025/02/20/pEQn8xS.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Code of GNN"/></a><div class="content"><a class="title" href="/2025/02/20/Code-of-GNN/" title="Code of GNN">Code of GNN</a><time datetime="2025-02-20T08:38:08.000Z" title="发表于 2025-02-20 08:38:08">2025-02-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/07/07/test/" title="test"><img src="https://cdn.pixabay.com/photo/2020/04/03/06/35/work-4997565_960_720.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="test"/></a><div class="content"><a class="title" href="/2024/07/07/test/" title="test">test</a><time datetime="2024-07-07T12:21:56.000Z" title="发表于 2024-07-07 12:21:56">2024-07-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/05/20/Triton-Inference-Server/" title="Triton Inference Server"><img src="https://s2.loli.net/2024/05/20/GzBTujbQtSUwdC8.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Triton Inference Server"/></a><div class="content"><a class="title" href="/2024/05/20/Triton-Inference-Server/" title="Triton Inference Server">Triton Inference Server</a><time datetime="2024-05-20T10:47:07.000Z" title="发表于 2024-05-20 10:47:07">2024-05-20</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2025 By 小茗</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'WujRNOh6ZAGBEHEc6GTuikTr-gzGzoHsz',
+      appKey: 'cVVyrU7nMiXxvWJnN4xBQ1R2',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !true) {
+  if (true) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="false" data-text="富强,民主,文明,和谐,自由,平等,公正,法治,爱国,敬业,诚信,友善" data-fontsize="15px" data-random="false" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

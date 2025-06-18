@@ -1,0 +1,273 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>DALL-E2及相关技术 | 小茗同志</title><meta name="author" content="小茗"><meta name="copyright" content="小茗"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="1.标题解读 Hierarchical Text-Conditional Image Generation with CLIP Latents 是一种层级式的基于CLIP特征的根据文本生成图像模型。 层级式的意思是说在图像生成时，先生成64*64再生成256*256，最终生成令人叹为观止的1024*1024的高清大图。 DALLE·2模型根据CLIP的文本特征和图像特征最终生成图像，可以看做CLI">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DALL-E2及相关技术">
+<meta property="og:url" content="http://example.com/2023/02/21/DALL-E2%E5%8F%8A%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF/index.html">
+<meta property="og:site_name" content="小茗同志">
+<meta property="og:description" content="1.标题解读 Hierarchical Text-Conditional Image Generation with CLIP Latents 是一种层级式的基于CLIP特征的根据文本生成图像模型。 层级式的意思是说在图像生成时，先生成64*64再生成256*256，最终生成令人叹为观止的1024*1024的高清大图。 DALLE·2模型根据CLIP的文本特征和图像特征最终生成图像，可以看做CLI">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/02/23/6RaAp9SQxgY7htm.png">
+<meta property="article:published_time" content="2023-02-21T12:05:39.000Z">
+<meta property="article:modified_time" content="2025-06-18T02:26:21.662Z">
+<meta property="article:author" content="小茗">
+<meta property="article:tag" content="CLIP">
+<meta property="article:tag" content="多模态">
+<meta property="article:tag" content="扩散模型">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/02/23/6RaAp9SQxgY7htm.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2023/02/21/DALL-E2%E5%8F%8A%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'DALL-E2及相关技术',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-06-18 02:26:21'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpeg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">24</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">21</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://s2.loli.net/2023/02/23/6RaAp9SQxgY7htm.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">小茗同志</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">DALL-E2及相关技术</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-02-21T12:05:39.000Z" title="发表于 2023-02-21 12:05:39">2023-02-21</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-06-18T02:26:21.662Z" title="更新于 2025-06-18 02:26:21">2025-06-18</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="DALL-E2及相关技术"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1>1.标题解读</h1>
+<p>Hierarchical Text-Conditional Image Generation with CLIP Latents</p>
+<p>是一种层级式的基于CLIP特征的根据文本生成图像模型。</p>
+<p><strong>层级式</strong>的意思是说在图像生成时，先生成<strong>64*64再生成256*256</strong>，最终生成令人叹为观止的<strong>1024*1024</strong>的高清大图。</p>
+<p>DALLE·2模型根据CLIP的文本特征和图像特征最终生成图像，可以看做CLIP的反向过程，因此DALLE·2被作者称为<strong>unCLIP</strong></p>
+<h1>2.前言</h1>
+<p>022Open AI提出DALLE2， 根据文本描述生成<strong>原创性的、现实的图像</strong>。可结合<strong>概念，属性和风格。</strong></p>
+<p>除了根据文本直接生成图片，还可以根据文本对图片进行修改。光线，纹理等。</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/f792e7ed7311590359552ccc55e602ea.jpeg" alt=""></p>
+<p><img src="https://img-blog.csdnimg.cn/801a32bd3119459f94489120f49f9048.png" alt=""><img src="https://img-blog.csdnimg.cn/43cf654477f2472abe304a7980febad6.png" alt=""></p>
+<p>图一中，在位置3加入火烈鸟，我们甚至可以看到在水中出现了火烈鸟的倒影，这是符合自然规律的。图二中，在水池中添加火烈鸟，出现的是一个火烈鸟的游泳圈，这说明游泳圈与水池的匹配程度较高，这也是符合常识的。以上两个例子真的让人叹为观止，说明了AI的的确确学到了一种很好的数据分布。</p>
+<p>我们一直认为AI是能先处理<strong>重复性的工作，也就是体力工作</strong>。而这种<strong>创造性</strong>的工作往往是AI无法取代的，但现在似乎已经触手可及了。</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/840a6c005b6a0c99fb490ca5ae916632.jpeg" alt=""></p>
+<p>上图是DALLE2与DALLE的对比，DALLE2达到了DALLE 4倍分辨率。</p>
+<p><img src="https://img-blog.csdnimg.cn/c3473dce6fdc4ff89276658745dcfbe9.png" alt=""></p>
+<p>上图是自2021年来该领域的发展，主要由清华的团队和OpenAI主导。</p>
+<p>模型主要架构为：</p>
+<p>先训练好一个CLIP模型，找到图像和文本对之间的相连关系。给定一个文本，CLIP的文本编码器就可以将这个文本变成一个文本特征。DALL·E2训练一个prior模型，将文本特征作为该模型的输入，输出为图像特征，将这个图像特征给解码器，从而生成一个完成的图像。CLIP结合GLIDE（基于扩散模型）</p>
+<h1>3.摘要部分</h1>
+<p>CLIP已经能够学习到很稳健的特征，比如语义semantics和风格style，如果只是拿来做分类就很可惜，如果能拿来做图像生成任务。两个阶段prior和decode。</p>
+<p>prior：根文本描述生成类似CLIP的图像特征；decoder：根据图像特征生成图像。</p>
+<p>两个亮点，一是显式的生成图像特征能够提高图像的<strong>多样性且非常逼真</strong>（图像写实程度以及文本匹配程度很高），而GAN是的本质是“以假乱真”，去生成一个相似的分布，虽然生成的图像很逼真，但是多样性不好。二是可以实时的利用文本信息引导模型生成编辑各种图片，不需要训练（zero-shot）。</p>
+<p>相对于自回归模型，解码器使用<strong>扩散模型</strong>效果更好。</p>
+<h1>4.引言部分</h1>
+<p>视觉领域的进展：大模型或者大数据集（图像文本对）例如CLIP，特别好的<strong>zero-shot</strong>能力。扩散模型（概率分布模型），在图像和视频生成任务上称为最前沿SOFT的模型。再一个就是，引导<strong>guidance</strong>的技巧，牺牲一部分多样性，提升更高的逼真度。</p>
+<p><img src="https://img-blog.csdnimg.cn/52defc54bc274f5790f0bd16bf8954a4.png" alt=""></p>
+<p>模型主要架构如上图，上部是一个CLIP，输入为文本图像对，文本信息和图像信息分别经过文本编码器和图像编码器提取文本特征C和图像特征C，文本特征C和图像特征C也是成对存在。下方作为DALLE2主体部分，主要由prior和decoder两阶段。首先，文本信息经过文本编码器提取文本特征D，然后prior根据文本信息D生成图像特征D。训练过程中，图像特征C作为图像特征D的ground truth进行训练，也就是说训练时DALLE2生成的图像特征D时不时的看一下CLIP生成的对应文本的图像特征C。最后通过一个解码器decoder根据图像特征D生成图像。</p>
+<h1>5.生成模型概述</h1>
+<p><img src="https://img-blog.csdnimg.cn/5e62930d5ef748f5b02c09727f9feda3.png" alt=""></p>
+<p>GAN的核心是“以假乱真”。致命缺点：训练不稳定，须同时训练两个网络，存在平衡的问题（生成器和判别器有一方特别好。另一个特别差），容易坍塌，图片多样性差一些。</p>
+<p><img src="https://img-blog.csdnimg.cn/88be6338226544bc85f1b1099d55bebf.png" alt=""></p>
+<p>编码器提取特征（维度比较小），解码器重构输入x。</p>
+<p><img src="https://img-blog.csdnimg.cn/9b0f201dda4942188a492daa8ca90935.png" alt=""></p>
+<p>AE、DAE又或者是MAE都是为了<strong>编码器提取特征</strong>，然后用这个特征去做一些分类、检测和分割等任务。训练过程的损失是将生成的样本与原始样本的差异作为损失，训练过程要时不时的看原始样本。然而，它们学到不是一种分布，无法进行采样。因此VAE（Variational auto-encoder）就用来做生成任务。</p>
+<p><img src="https://img-blog.csdnimg.cn/f10cbec12eb44e2d94a328af6dd388f7.png" alt=""></p>
+<p>VAE 与AE、DAE不同的是，特征是从编码器学习到的分布中采样得到的。多样性相对于GAN就要好很多。</p>
+<p>那么如果我们出门之前我们听到新闻说今天路上出了个交通事故，那么我们想算一下堵车的概率，这个就叫做条件概率 。也就是P(堵车|交通事故)。这是有因求果，<strong>先验概率。</strong></p>
+<p>如果我们已经出了门，然后遇到了堵车，那么我们想算一下堵车时由交通事故引起的概率有多大，那这个就叫做<strong>后验概率</strong> （也是条件概率，但是通常习惯这么说） 。也就是P(交通事故|堵车)。这是有果求因。</p>
+<p><img src="https://img-blog.csdnimg.cn/3c258f6c6cdf4e1a9d7369cdfcc1ddd4.png" alt=""></p>
+<p>VQ-VAE提出离散化的思想，在处理图像和语音时，图像变成像素，语音也是抽样的。与VAE不同的是， <strong>VQ-VAE不再去做分布的预测，使用一个codebook取而代之</strong>。codebook可以理解为聚类的中心，codebook的大小一般为k×d，k8192，d=512或者768。8192个长为d的向量，即为8192个聚类中心。<strong>由于量化的特征（quantised feature）都是codebook中的，就非常可控</strong>然而，要学习固定的codebook，又无法像VAE一样随机采样，多样性就差一些。</p>
+<p><img src="https://img-blog.csdnimg.cn/c000c8161b364678bef3708948f47f42.png" alt=""></p>
+<p>dalle-1在用gpt训练时做的是掩码预测训练，类似自回归，但是预测图片像素。</p>
+<p><img src="https://img-blog.csdnimg.cn/0afe74423a4946c2bd8d420f9157aa72.png" alt=""></p>
+<p>前向扩散过程（forward diffusion）：不断地加噪声，最终原始样本就变成了噪声。</p>
+<p>反向扩散（reverse diffusion）：不断地降噪，最终噪声就变成了目标样本。</p>
+<p><strong>本质：将随机噪声一点一点降噪，次数足够多，就可以生成想要的图片。</strong></p>
+<p><strong>扩散的概念时引用自热力学。</strong></p>
+<h1>6.扩散模型的发展</h1>
+<p>初步2015年左右。2020年6月，Denoising Diffusion Probabilistic Model（DDPM），利用残差的思想，<strong>不再去预测xt-1，而是去预测噪声ε。</strong></p>
+<p><img src="https://img-blog.csdnimg.cn/85fd22935cff47b48400d253b21fad2f.png" alt=""></p>
+<p>1.利用残差的思想，xt=xt-1+ε。不去预测xt-1，转而预测噪声ε。</p>
+<p>2.加入了time embedding。告诉模型预测到哪一步。开始生成轮廓，粗糙的大致的轮廓，随着进一步预测，逐渐生成细致的特征。</p>
+<p><strong>训练过程损失loss，预测的噪声（反向扩散过程）与设定的噪声（前向扩散过程）之间的差值，设定的噪声是正向扩散过程人为设定的，是已知的。</strong></p>
+<p>扩散模型与VAE区别和联系：</p>
+<p>1.DDPM也可以看做编码器-解码器的结构。DDPM添加噪声的编码器是固定的过程，而VAE的编码器是学习获得的。</p>
+<p>2.扩散模型的每一步，特征图大小都是一样的，而AE等编码器提取的bottleneck feature则是维度较小（压缩）的特征。</p>
+<p>3.扩散模型与步数的概念，正向和反向过程。time embedding</p>
+<p>DDPM—improved DDPM(学了方差、添加噪声的schedule改善)—diffusion beats GAN(大模型，新的归一化)—GLIDE（classifer guided diffusion）—DALLE2</p>
+<p><img src="https://img-blog.csdnimg.cn/e6a773ea17ba4d9388fe25136be2ff21.png" alt=""></p>
+<p>用分类器计算一个交叉熵损失，得到一个<strong>梯度引导采样、图像生成。梯度隐含着信息，这些信息包括当前图片是否含有一个物体，生成的物体是否真实</strong>。牺牲了一部分多样性，改善了逼真性。</p>
+<p>classifer free guidance</p>
+<p><img src="https://img-blog.csdnimg.cn/30042e38c44e487c888af29933942547.png" alt=""></p>
+<p><img src="https://img-blog.csdnimg.cn/561bc74233864123ae13fde6ab055f9c.png" alt=""></p>
+<p>训练时生成两个输出。一个有条件，一个无条件。对比两个输出，就可以<strong>学习到两个输出之间的差异（在高维特征空间）</strong>。在测试时，使用无条件的模型得到无条件的输出，并利用学到的差异，修正无条件的输出，也可以得到和有条件的输出类似的结果。</p>
+<h1>7.方法部分</h1>
+<p><img src="https://img-blog.csdnimg.cn/3f2e12763fae4147bd5b9dc59c524a47.png" alt=""></p>
+<p>回顾一下模型架构，上部是一个CLIP，输入为文本图像对，文本信息和图像信息分别经过文本编码器和图像编码器提取文本特征C和图像特征C，文本特征C和图像特征C也是成对存在。下方作为DALLE2主体部分，主要由prior和decoder两阶段。首先，**文本信息经过文本编码器提取文本特征D，然后prior根据文本信息D生成图像特征D。训练过程中，图像特征C作为图像特征D的ground truth进行训练，**也就是说训练时DALLE2生成的图像特征D时不时的看一下CLIP生成的对应文本的图像特征C。最后通过一个解码器decoder根据图像特征D生成图像。</p>
+<p>两阶段的形式，公式如下：</p>
+<p>The decoder allows us to invert images given their CLIP image embeddings, while the prior allows us to learn a generative model of the image embeddings themselves. Stacking these two components yields a generative model P (x|y) of images x given captions y:</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>x</mi><mo>∣</mo><mi>y</mi><mo stretchy="false">)</mo><mo>=</mo><mi>P</mi><mrow><mo fence="true">(</mo><mi>x</mi><mo separator="true">,</mo><msub><mi>z</mi><mi>i</mi></msub><mo>∣</mo><mi>y</mi><mo fence="true">)</mo></mrow><mo>=</mo><mi>P</mi><mrow><mo fence="true">(</mo><mi>x</mi><mo>∣</mo><msub><mi>z</mi><mi>i</mi></msub><mo separator="true">,</mo><mi>y</mi><mo fence="true">)</mo></mrow><mi>P</mi><mrow><mo fence="true">(</mo><msub><mi>z</mi><mi>i</mi></msub><mo>∣</mo><mi>y</mi><mo fence="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">P(x \mid y)=P\left(x, z_i \mid y\right)=P\left(x \mid z_i, y\right) P\left(z_i \mid y\right)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">(</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.044em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose delimcenter" style="top:0em;">)</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">(</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.044em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose delimcenter" style="top:0em;">)</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.044em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose delimcenter" style="top:0em;">)</span></span></span></span></span></span></p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>x</mi><mo>∣</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P(x \mid y)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span></span></span></span> 根据文本生成图像； <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mrow><mo fence="true">(</mo><mi>x</mi><mo separator="true">,</mo><msub><mi>z</mi><mi>i</mi></msub><mo>∣</mo><mi>y</mi><mo fence="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">P\left(x, z_i \mid y\right)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">(</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.044em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose delimcenter" style="top:0em;">)</span></span></span></span></span> 根据文本生成图像特征和图像</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mrow><mo fence="true">(</mo><mi>x</mi><mo>∣</mo><msub><mi>z</mi><mi>i</mi></msub><mo separator="true">,</mo><mi>y</mi><mo fence="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">P\left(x \mid z_i, y\right)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">(</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.044em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose delimcenter" style="top:0em;">)</span></span></span></span></span> 根据文本和图像特征生成图像；<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><msub><mi>z</mi><mi>i</mi></msub><mo>∣</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P(z_i \mid y)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.044em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span></span></span></span>  根据文本生成图像特征</p>
+<p><img src="https://img-blog.csdnimg.cn/b98340f1f2de4a479283dc56ebb7d33e.png" alt=""></p>
+<p>GLIDE模型的变体，使用了CLIP的guidance。</p>
+<p>也使用了classifier-free guidance。</p>
+<p>级联式的生成，分辨率64*64-256*256-1024*1024。为了训练的稳定性，作者在训练时加了很多噪声。另外，扩散模型大部分是U-Net，是一个CNN的结构而非transformer。推理时可以用在任何尺寸上，并不需要序列长度保持一致。</p>
+<p><img src="https://img-blog.csdnimg.cn/5489aeb158a04529add8fd5dd8524f65.png" alt=""></p>
+<p>prior模型：基于文本去生成图像特征。</p>
+<p>不论是自回归模型还是扩散模型，都使用了<strong>classifier free guidance</strong>，因为效果确实好。</p>
+<p><img src="https://img-blog.csdnimg.cn/628ad6c1e4a045ecabae5eaf9c29d2f2.png" alt=""></p>
+<p>作者训练了一个transformer 的decoder，因为这里的输入输出是embedding，直接用transformer处理序列。输入有文本、CLIP文本的embedding，扩散模型的timestep embedding，加入噪声后的CLIP图像embedding以及transformer自身的embedding（CLStoken）。输出为没有加入噪声的CLIP图像embedding。</p>
+<p>DDPM曾提出利用残差思想预测噪声，但是这里作者发现<strong>直接预测没有噪声的图像要比预测噪声更好。因此这里的损失是预测值与未加噪声的图像（特征）直接对比。</strong></p>
+<p>8.结果</p>
+<p><img src="https://img-blog.csdnimg.cn/0afa095c5a944c25b5c62a9550defff4.png" alt=""></p>
+<p>MS-COCO256*256上FID分数，DALLE2（unCLIP）达到了最低的分数，使用扩散模型比自回归AR模型分数也有略微的降低。</p>
+<p><img src="https://img-blog.csdnimg.cn/b8d008b10d924c7ca116d9ca8fd7a052.png" alt=""></p>
+<p>通过对比不同模型根据特定的文本信息生成的图像，DALLE2确实生成比较真实的，复合语境的图像。</p>
+<p>9.局限性</p>
+<p><img src="https://img-blog.csdnimg.cn/cdc26e8eedc245e18ddd624a45149dc0.png" alt=""></p>
+<p>无法将物体和属性结合起来。CLIP太关注物体间的相似性，不能识别上下左右等方位信息。</p>
+<p><img src="https://img-blog.csdnimg.cn/0263263559e144ff82ce85349365786e.png" alt=""></p>
+<p>生成图片，图片中文字的顺序不对。文本编码器BPE的存根词缀编码存在问题。</p>
+<p><img src="https://img-blog.csdnimg.cn/905ed2b3f54345c09d60def50210064b.png" alt=""></p>
+<p>不能生成特别复杂场景的图像，<strong>细节缺失特别严重</strong>。第一张图修狗在湖边绿色的草地上，前景特别突出，导致湖边和草地的背景不够明显。第二张时代广场上广告牌都是像素块。</p>
+<p>参考：</p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV17r4y1u77B?spm_id_from=333.999.0.0&amp;vd_source=8203bbd7379886d2ef6007067465d65c" title="DALL·E 2【论文精读】_哔哩哔哩_bilibili">DALL·E 2【论文精读】_哔哩哔哩_bilibili<img src="https://csdnimg.cn/release/blog_editor_html/release2.2.0/ckeditor/plugins/CsdnLink/icons/icon-default.png?t=M85B" alt="">https://www.bilibili.com/video/BV17r4y1u77B?spm_id_from=333.999.0.0&amp;vd_source=8203bbd7379886d2ef6007067465d65c</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">小茗</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2023/02/21/DALL-E2%E5%8F%8A%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF/">http://example.com/2023/02/21/DALL-E2%E5%8F%8A%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">小茗同志</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/CLIP/">CLIP</a><a class="post-meta__tags" href="/tags/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a><a class="post-meta__tags" href="/tags/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/">扩散模型</a></div><div class="post_share"><div class="social-share" data-image="https://s2.loli.net/2023/02/23/6RaAp9SQxgY7htm.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.png" target="_blank"><img class="post-qr-code-img" src="/img/wechat.png" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/02/17/stable-diffison%E7%9A%84%E7%BB%93%E6%9E%84%E8%A7%A3%E6%9E%90/"><img class="prev-cover" src="https://s2.loli.net/2023/02/17/C52SmsU1fQlwtTY.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">stable_diffison的结构解析</div></div></a></div><div class="next-post pull-right"><a href="/2023/02/23/CLIP%E5%9B%BE%E5%83%8F%E6%96%87%E6%9C%AC%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0/"><img class="next-cover" src="https://cdn.openai.com/research-covers/clip/2x-no-mark.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">CLIP图像文本对比学习</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/02/23/CLIP%E5%9B%BE%E5%83%8F%E6%96%87%E6%9C%AC%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0/" title="CLIP图像文本对比学习"><img class="cover" src="https://cdn.openai.com/research-covers/clip/2x-no-mark.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-02-23</div><div class="title">CLIP图像文本对比学习</div></div></a></div><div><a href="/2023/02/17/stable-diffison%E7%9A%84%E7%BB%93%E6%9E%84%E8%A7%A3%E6%9E%90/" title="stable_diffison的结构解析"><img class="cover" src="https://s2.loli.net/2023/02/17/C52SmsU1fQlwtTY.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-02-17</div><div class="title">stable_diffison的结构解析</div></div></a></div><div><a href="/2023/03/22/ControlNet/" title="ControlNet"><img class="cover" src="https://cdn.pixabay.com/photo/2020/04/03/06/35/work-4997565_960_720.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-03-22</div><div class="title">ControlNet</div></div></a></div><div><a href="/2023/01/06/Diffusion-Modle/" title="Diffusion Modle"><img class="cover" src="/image/deffusion.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-01-06</div><div class="title">Diffusion Modle</div></div></a></div><div><a href="/2023/03/23/%E5%8F%AF%E6%8E%A7%E5%9B%BE%E5%83%8F%E7%94%9F%E6%88%90%E5%B0%8F%E7%BB%BC%E8%BF%B0/" title="可控图像生成小综述"><img class="cover" src="https://cdn.pixabay.com/photo/2020/04/03/06/35/work-4997565_960_720.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-03-23</div><div class="title">可控图像生成小综述</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpeg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">小茗</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">24</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">21</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/themoongodyue"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/themoongodyue" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:yuecao04@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">1.标题解读</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">2.前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">3.摘要部分</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">4.引言部分</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">5.生成模型概述</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">6.扩散模型的发展</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">7.方法部分</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/06/18/hello-world/" title="Hello World"><img src="https://cdn.pixabay.com/photo/2020/04/03/06/35/work-4997565_960_720.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hello World"/></a><div class="content"><a class="title" href="/2025/06/18/hello-world/" title="Hello World">Hello World</a><time datetime="2025-06-18T02:26:21.663Z" title="发表于 2025-06-18 02:26:21">2025-06-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/02/20/think-of-GNN/" title="think of GNN"><img src="https://s21.ax1x.com/2025/02/20/pEQwN5V.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="think of GNN"/></a><div class="content"><a class="title" href="/2025/02/20/think-of-GNN/" title="think of GNN">think of GNN</a><time datetime="2025-02-20T16:27:34.000Z" title="发表于 2025-02-20 16:27:34">2025-02-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/02/20/Code-of-GNN/" title="Code of GNN"><img src="https://s21.ax1x.com/2025/02/20/pEQn8xS.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Code of GNN"/></a><div class="content"><a class="title" href="/2025/02/20/Code-of-GNN/" title="Code of GNN">Code of GNN</a><time datetime="2025-02-20T08:38:08.000Z" title="发表于 2025-02-20 08:38:08">2025-02-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/07/07/test/" title="test"><img src="https://cdn.pixabay.com/photo/2020/04/03/06/35/work-4997565_960_720.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="test"/></a><div class="content"><a class="title" href="/2024/07/07/test/" title="test">test</a><time datetime="2024-07-07T12:21:56.000Z" title="发表于 2024-07-07 12:21:56">2024-07-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/05/20/Triton-Inference-Server/" title="Triton Inference Server"><img src="https://s2.loli.net/2024/05/20/GzBTujbQtSUwdC8.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Triton Inference Server"/></a><div class="content"><a class="title" href="/2024/05/20/Triton-Inference-Server/" title="Triton Inference Server">Triton Inference Server</a><time datetime="2024-05-20T10:47:07.000Z" title="发表于 2024-05-20 10:47:07">2024-05-20</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2025 By 小茗</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'WujRNOh6ZAGBEHEc6GTuikTr-gzGzoHsz',
+      appKey: 'cVVyrU7nMiXxvWJnN4xBQ1R2',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !true) {
+  if (true) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="false" data-text="富强,民主,文明,和谐,自由,平等,公正,法治,爱国,敬业,诚信,友善" data-fontsize="15px" data-random="false" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

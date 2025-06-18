@@ -1,0 +1,218 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>CLIP图像文本对比学习 | 小茗同志</title><meta name="author" content="小茗"><meta name="copyright" content="小茗"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="简介 CLIP 是OpenAI 在2021年初的一篇工作：Learning Transferable Visual Models From Natural Language Supervision 。它是一个 zero-shot 的视觉分类模型，预训练的模型在没有微调的情况下在下游任务上取得了很好的迁移效果。作者在30多个数据集上做了测试，涵盖了 OCR、视频中的动作检测、坐标定位等任务。 在引言">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CLIP图像文本对比学习">
+<meta property="og:url" content="http://example.com/2023/02/23/CLIP%E5%9B%BE%E5%83%8F%E6%96%87%E6%9C%AC%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="小茗同志">
+<meta property="og:description" content="简介 CLIP 是OpenAI 在2021年初的一篇工作：Learning Transferable Visual Models From Natural Language Supervision 。它是一个 zero-shot 的视觉分类模型，预训练的模型在没有微调的情况下在下游任务上取得了很好的迁移效果。作者在30多个数据集上做了测试，涵盖了 OCR、视频中的动作检测、坐标定位等任务。 在引言">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.openai.com/research-covers/clip/2x-no-mark.jpg">
+<meta property="article:published_time" content="2023-02-23T17:19:55.000Z">
+<meta property="article:modified_time" content="2025-06-18T02:26:21.662Z">
+<meta property="article:author" content="小茗">
+<meta property="article:tag" content="对比学习">
+<meta property="article:tag" content="自监督学习">
+<meta property="article:tag" content="CLIP">
+<meta property="article:tag" content="多模态">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.openai.com/research-covers/clip/2x-no-mark.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2023/02/23/CLIP%E5%9B%BE%E5%83%8F%E6%96%87%E6%9C%AC%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'CLIP图像文本对比学习',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-06-18 02:26:21'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpeg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">24</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">21</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.openai.com/research-covers/clip/2x-no-mark.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">小茗同志</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">CLIP图像文本对比学习</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-02-23T17:19:55.000Z" title="发表于 2023-02-23 17:19:55">2023-02-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-06-18T02:26:21.662Z" title="更新于 2025-06-18 02:26:21">2025-06-18</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="CLIP图像文本对比学习"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="简介">简介</h2>
+<p>CLIP 是OpenAI 在2021年初的一篇工作：<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2103.00020.pdf">Learning Transferable Visual Models From Natural Language Supervision</a> 。它是一个 zero-shot 的视觉分类模型，预训练的模型在没有微调的情况下在下游任务上取得了很好的迁移效果。作者在30多个数据集上做了测试，涵盖了 OCR、视频中的动作检测、坐标定位等任务。</p>
+<p>在引言的最后一段，作者特意强调了 CLIP 的效果：没有在 ImageNet 上做微调的CLIP，竟然能和已经在 ImageNet 上训练好的 Resnet 50 打成平手，简直不可思议。CLIP 为什么能取得如此好的效果？它又有哪些不足之处？<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1SL4y1s7LQ/">CLIP 论文逐段精读【论文精读】</a> 这个视频里朱神带给你答案。</p>
+<h2 id="预训练阶段">预训练阶段</h2>
+<p>论文标题中有一个重要的点——自然语言监督。这说明 CLIP 是涉及文字和图片的多模态领域的工作，它从文本中得到监督信号，引导视觉分类的任务。</p>
+<p>其实，预训练网络的输入是文字与图片的配对，每一张图片都配有一小句解释性的文字。将文字和图片分别通过一个编码器，得到向量表示。这里的文本编码器就是 Transformer；而图片编码器既可以是 Resnet，也可以是 Vision transformer，作者对这两种结构都进行了考察。</p>
+<p><img src="https://openaiassets.blob.core.windows.net/$web/clip/draft/20210104b/overview-a.svg" alt=""></p>
+<p>预训练网络结构</p>
+<p>假设现在分别得到了 N 个图片和 N 个文本的编码。接下来，我们需要对它们进行对比学习（contrastive learning）。对比学习需要一些正样本和负样本。在这里，配对的句子和文本就是一对正样本（也就是对角线上的）；反之，不配对的就是负样本（对角线之外的）。预训练网络的目标，就是最大化正样本对的余弦相似度，并最小化负样本的余弦相似度。</p>
+<p>这种无监督的训练方式需要大量的数据。后面我们会提到，OpenAI 专门收集了四亿个样本对的巨无霸数据集。真是有钱任性啊。</p>
+<h2 id="推理过程">推理过程</h2>
+<p>接下来是 zero-shot 的推理过程。给定一张图片，如何利用预训练好的网络去做分类呢？这里作者很巧妙地设置了一道“多项选择”。具体来说，我给网络一堆分类标签，比如cat, dog, bird，利用文本编码器得到向量表示。然后分别计算这些标签与图片的余弦相似度；最终相似度最高的标签即是预测的分类结果。</p>
+<p>作者提到，相比于单纯地给定分类标签，给定一个句子的分类效果更好。比如一种句子模板 <code>A photo of a ...</code>，后面填入分类标签。这种句子模板叫做 <code>prompt</code>（提示）。这也很好理解：预训练时模型看到的大多是句子，如果在推理时突然变成单词，效果肯定会下降。作者还说，句子模板的选择很有讲究，还专门讨论了<code>prompt engineering</code>，测试了好多种类的句子模板。</p>
+<p><img src="https://openaiassets.blob.core.windows.net/$web/clip/draft/20210104b/overview-b.svg" alt=""></p>
+<p>推理过程中最关键的一点，在于我们有很高的自由度去设置“多项选择题”。从前的分类网络的类别数量是固定的，一般最后一层是跟着 softmax 的全连接层；如果要更改类别数量，就要更换最后一层；并且预测的内容是固定的，不能超过训练集的类别范围。</p>
+<p>但对于 CLIP 来说，提供给网络的分类标签不仅数量不固定，内容也是自由的。如果提供两个标签，那就是一个二分类问题；如果提供1000个标签，那就是1000分类问题。标签内容可以是常规的分类标签，也可以是一些冷门的分类标签。我认为这是 <strong>CLIP 的一大主要贡献——摆脱了事先定好的分类标签</strong>。</p>
+<p><img src="https://pic1.zhimg.com/v2-865382457e40ee1e473ec9a69c962314_r.jpg" alt=""></p>
+<p><a target="_blank" rel="noopener" href="https://openai.com/blog/clip/">CLIP 的官方博客</a> 上举了一个例子，说明 CLIP 迁移能力的强大。尽管 Resnet101 在 Imagenet 上的准确度很高，但如果迁移到其他数据集上，它对于香蕉的识别准确度就大幅下降。但反观 CLIP，它可以识别动漫里的、表情包里的、素描画里的各种类型的香蕉，迁移能力很强。</p>
+<h2 id="伪代码">伪代码</h2>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># image_encoder - ResNet or Vision Transformer</span></span><br><span class="line"><span class="comment"># text_encoder - CBOW or Text Transformer</span></span><br><span class="line"><span class="comment"># I[n, h, w, c] - 输入图片维度</span></span><br><span class="line"><span class="comment"># T[n, l] - 输入文本维度，l表示序列长度</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># W_i[d_i, d_e] - learned proj of image to embed</span></span><br><span class="line"><span class="comment"># W_t[d_t, d_e] - learned proj of text to embed</span></span><br><span class="line"><span class="comment"># t - learned temperature parameter</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#  分别提取图像特征和文本特征</span></span><br><span class="line">I_f = image_encoder(I) <span class="comment">#[n, d_i]</span></span><br><span class="line">T_f = text_encoder(T) <span class="comment">#[n, d_t]</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 对两个特征进行线性投射，得到相同的特征维度d_e，并进行l2归一化，保持数据尺度的一致性</span></span><br><span class="line"><span class="comment"># 多模态embedding [n, d_e]</span></span><br><span class="line">I_e = l2_normalize(np.dot(I_f, W_i), axis=<span class="number">1</span>)</span><br><span class="line">T_e = l2_normalize(np.dot(T_f, W_t), axis=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算缩放的余弦相似度：[n, n]</span></span><br><span class="line">logits = np.dot(I_e, T_e.T) * np.exp(t)</span><br><span class="line"></span><br><span class="line"><span class="comment"># symmetric loss function</span></span><br><span class="line">labels = np.arange(n) <span class="comment">#  对角线元素的labels</span></span><br><span class="line">loss_i = cross_entropy_loss(logits, labels, axis=<span class="number">0</span>) <span class="comment"># image loss</span></span><br><span class="line">loss_t = cross_entropy_loss(logits, labels, axis=<span class="number">1</span>) <span class="comment"># text loss</span></span><br><span class="line">loss = (loss_i + loss_t)/<span class="number">2</span> <span class="comment"># 对称式的目标函数</span></span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="数据集">数据集</h2>
+<p>作者提到，现有的图像数据集都太小了。像 Imagenet 21k 才有 1400 万张图片。还有一些数据集虽然够大，但是标注质量很差。另外，虽然有谷歌的 JFT300 数据集（3亿个样本），但那是人家内部的，没有公开啊。所以 OpenAI 决定自己造一个超大号数据集。他们收集了 4亿个图片-文本对，构建了 <code>WebImageText</code> (WIT) 数据集。</p>
+<p>这是个什么概念？我刚接触 CV 的时候，看到 Imagenet 有上千万的图片，觉得这真是个超大的数据集。现在呢？WIT 的规模已经是它的几十倍了。</p>
+<h3 id="算力垄断">算力垄断</h3>
+<p>在 CLIP 之前，不是没有工作试图打通文本与图像的隔阂。但它们要么是模型不够大，要么是数据集不够好，总之效果都不够惊艳。CLIP 一方面构建了超大规模数据集，另一方面用了像 Vision Transformer 这种大模型，两相加持下，终于一鸣惊人。</p>
+<p>这引发了一些人关于算力垄断的担忧。之前谷歌的工作——<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2010.11929.pdf">Vision Transformer</a> 之所以能取得成功，强大的算力是不可缺少的条件：如果用一个TPU v3 核跑模型，需要2500天。没有几家团队有能力部署这种规模的算力。来看看 <a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2010.11929.pdf">Vision Transformer</a> 这篇论文里的原话吧：</p>
+<blockquote>
+<p>Most related to ours is the model of Cordonnier et al. (2020), which extracts patches of size 2 × 2 from the input image and applies full self-attention on top. <strong>This model is very similar to ViT, but our work goes further to demonstrate that large scale pre-training makes vanilla transformers competitive with (or even better than) state-of-the-art CNNs</strong>.</p>
+</blockquote>
+<p>你的模型效果不好，很有可能不是方法不行，而是数据不够多、模型不够大啊！啧啧啧</p>
+<hr>
+<h2 id="模型局限性">模型局限性</h2>
+<p>作者在第六章介绍了 CLIP 的局限性。</p>
+<p>首先，虽然 CLIP 在 Imagenet 上与 Resnet 50 打成平手。但后者远远不是 state-of-art model。CLIP 离表现最好的模型还差了十几点精度。尽管大规模训练能够极大地促进模型精度，但作者预估，要媲美现今表现最好的模型，计算量至少要扩大 1000 倍。即使对于 OpenAI 来说，以现有的硬件也无法承担这个计算量。</p>
+<p>另一个问题在于，如果做推理的数据真的和训练数据差得非常远 (out of distribution)，那么 CLIP 的泛化效果会很差。作者举了个例子，在MNIST数据集上（1-9手写数字图片），CLIP 只达到了88%的准确度，还不如一个作用在像素点上的逻辑回归。虽然 4 亿数据集很大，但是很有可能没有包含这种不常见的手写数字的图片。这就引起了一些疑虑：CLIP 的强大有多大程度上取决于这个高质量、大规模的数据集。</p>
+<p>还有一点，CLIP 在推理阶段，需要我们手动地设置“多项选择题”。作者设想，如果能够让网络自动生成文本来描述图片就好了。另外作者还提到了数据利用效率不高的问题。</p>
+<hr>
+<h2 id="总结">总结</h2>
+<p>CLIP 的最大贡献在于打破了固定种类标签的桎梏，让下游任务的推理变得更灵活。并且在 zero-shot 的情况下，它的效果很不错。在这篇工作发表之后，涌现出了一大批在其他领域的应用，包括物体检测、物体分割、图像生成、视频动作检索等。在创新度、有效性、影响力方面都非常出色。</p>
+<p>虽然 OpenAI 并没有开源预训练的代码，但他们开源了预训练好的模型和 API，可以直接拿来做下游任务的推理，大家可以去玩一玩: <a target="_blank" rel="noopener" href="https://github.com/openai/CLIP">CLIP的github页面</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">小茗</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2023/02/23/CLIP%E5%9B%BE%E5%83%8F%E6%96%87%E6%9C%AC%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0/">http://example.com/2023/02/23/CLIP%E5%9B%BE%E5%83%8F%E6%96%87%E6%9C%AC%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">小茗同志</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0/">对比学习</a><a class="post-meta__tags" href="/tags/%E8%87%AA%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/">自监督学习</a><a class="post-meta__tags" href="/tags/CLIP/">CLIP</a><a class="post-meta__tags" href="/tags/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.openai.com/research-covers/clip/2x-no-mark.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.png" target="_blank"><img class="post-qr-code-img" src="/img/wechat.png" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/02/21/DALL-E2%E5%8F%8A%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF/"><img class="prev-cover" src="https://s2.loli.net/2023/02/23/6RaAp9SQxgY7htm.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">DALL-E2及相关技术</div></div></a></div><div class="next-post pull-right"><a href="/2023/03/22/ControlNet/"><img class="next-cover" src="https://cdn.pixabay.com/photo/2020/04/03/06/35/work-4997565_960_720.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">ControlNet</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/02/09/MoCo-%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0-%E8%AF%A6%E8%A7%A3/" title="moco对比学习详解"><img class="cover" src="https://img-blog.csdnimg.cn/7269e2cdab684831addc64b4f045cdaf.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6Zm25bCG,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-02-09</div><div class="title">moco对比学习详解</div></div></a></div><div><a href="/2023/02/21/DALL-E2%E5%8F%8A%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF/" title="DALL-E2及相关技术"><img class="cover" src="https://s2.loli.net/2023/02/23/6RaAp9SQxgY7htm.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-02-21</div><div class="title">DALL-E2及相关技术</div></div></a></div><div><a href="/2023/02/17/stable-diffison%E7%9A%84%E7%BB%93%E6%9E%84%E8%A7%A3%E6%9E%90/" title="stable_diffison的结构解析"><img class="cover" src="https://s2.loli.net/2023/02/17/C52SmsU1fQlwtTY.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-02-17</div><div class="title">stable_diffison的结构解析</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpeg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">小茗</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">24</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">21</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/themoongodyue"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/themoongodyue" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:yuecao04@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%84%E8%AE%AD%E7%BB%83%E9%98%B6%E6%AE%B5"><span class="toc-text">预训练阶段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A8%E7%90%86%E8%BF%87%E7%A8%8B"><span class="toc-text">推理过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%AA%E4%BB%A3%E7%A0%81"><span class="toc-text">伪代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="toc-text">数据集</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%97%E5%8A%9B%E5%9E%84%E6%96%AD"><span class="toc-text">算力垄断</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E5%B1%80%E9%99%90%E6%80%A7"><span class="toc-text">模型局限性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/06/18/hello-world/" title="Hello World"><img src="https://cdn.pixabay.com/photo/2020/04/03/06/35/work-4997565_960_720.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hello World"/></a><div class="content"><a class="title" href="/2025/06/18/hello-world/" title="Hello World">Hello World</a><time datetime="2025-06-18T02:26:21.663Z" title="发表于 2025-06-18 02:26:21">2025-06-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/02/20/think-of-GNN/" title="think of GNN"><img src="https://s21.ax1x.com/2025/02/20/pEQwN5V.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="think of GNN"/></a><div class="content"><a class="title" href="/2025/02/20/think-of-GNN/" title="think of GNN">think of GNN</a><time datetime="2025-02-20T16:27:34.000Z" title="发表于 2025-02-20 16:27:34">2025-02-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/02/20/Code-of-GNN/" title="Code of GNN"><img src="https://s21.ax1x.com/2025/02/20/pEQn8xS.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Code of GNN"/></a><div class="content"><a class="title" href="/2025/02/20/Code-of-GNN/" title="Code of GNN">Code of GNN</a><time datetime="2025-02-20T08:38:08.000Z" title="发表于 2025-02-20 08:38:08">2025-02-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/07/07/test/" title="test"><img src="https://cdn.pixabay.com/photo/2020/04/03/06/35/work-4997565_960_720.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="test"/></a><div class="content"><a class="title" href="/2024/07/07/test/" title="test">test</a><time datetime="2024-07-07T12:21:56.000Z" title="发表于 2024-07-07 12:21:56">2024-07-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/05/20/Triton-Inference-Server/" title="Triton Inference Server"><img src="https://s2.loli.net/2024/05/20/GzBTujbQtSUwdC8.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Triton Inference Server"/></a><div class="content"><a class="title" href="/2024/05/20/Triton-Inference-Server/" title="Triton Inference Server">Triton Inference Server</a><time datetime="2024-05-20T10:47:07.000Z" title="发表于 2024-05-20 10:47:07">2024-05-20</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2025 By 小茗</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'WujRNOh6ZAGBEHEc6GTuikTr-gzGzoHsz',
+      appKey: 'cVVyrU7nMiXxvWJnN4xBQ1R2',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !true) {
+  if (true) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="false" data-text="富强,民主,文明,和谐,自由,平等,公正,法治,爱国,敬业,诚信,友善" data-fontsize="15px" data-random="false" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
